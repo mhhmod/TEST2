@@ -15,14 +15,13 @@ const AppState = {
         currency: 'EGP',
         originalPrice: 350.00
     },
-    webhookUrl: '', // Will be set from environment or fallback
     isSubmitting: false
 };
 
 // Configuration
 const CONFIG = {
-    // Get webhook URL from environment variable with fallback
-    webhookUrl: getWebhookUrl(),
+    // Get webhook URL from global config
+    webhookUrl: window.CONFIG ? window.CONFIG.WEBHOOK_URL : 'https://grindctrlface.app.n8n.cloud/webhook/test2git',
     maxQuantity: 10,
     minQuantity: 1,
     shippingCost: 0, // Free shipping
@@ -31,26 +30,6 @@ const CONFIG = {
         position: 'top-right'
     }
 };
-
-/**
- * Get webhook URL from configuration or environment
- */
-function getWebhookUrl() {
-    // Try to get from global config first
-    if (window.CONFIG && window.CONFIG.WEBHOOK_URL && window.CONFIG.WEBHOOK_URL !== 'PLACEHOLDER_WEBHOOK_URL') {
-        return window.CONFIG.WEBHOOK_URL;
-    }
-    
-    // For development/testing, check if we have it in a meta tag or other source
-    const metaWebhook = document.querySelector('meta[name="webhook-url"]');
-    if (metaWebhook) {
-        return metaWebhook.getAttribute('content');
-    }
-    
-    // Fallback - this should be replaced during deployment
-    console.warn('Webhook URL not configured. Orders will not be processed.');
-    return null;
-}
 
 /**
  * DOM Content Loaded Event Handler
@@ -120,7 +99,6 @@ function initializeQuantityControls() {
 function initializeFormHandlers() {
     const orderForm = document.getElementById('orderForm');
     const addToCartBtn = document.getElementById('addToCartBtn');
-    const buyNowBtn = document.getElementById('buyNowBtn');
     
     if (!orderForm) {
         console.error('Order form not found');
@@ -242,7 +220,7 @@ function getFormData() {
 function validateForm(data) {
     const requiredFields = [
         'size', 'quantity', 'firstName', 'lastName', 
-        'email', 'phone', 'address', 'city', 'postalCode'
+        'email', 'phone', 'address', 'city', 'postalCode', 'paymentMethod'
     ];
     
     return validateRequiredFields(requiredFields) && validateEmailFormat(data.email);
@@ -353,7 +331,8 @@ function getFieldLabel(fieldName) {
         phone: 'Phone Number',
         address: 'Shipping Address',
         city: 'City',
-        postalCode: 'Postal Code'
+        postalCode: 'Postal Code',
+        paymentMethod: 'Payment Method'
     };
     
     return labels[fieldName] || fieldName;
@@ -370,43 +349,23 @@ function prepareOrderData(formData) {
     const orderId = generateOrderId();
     const orderDate = new Date().toISOString();
     
-    // Auto-generate system values
-    const codAmount = total; // COD Amount = Total Amount
-    const trackingNumber = generateTrackingNumber();
-    const courier = "BOSTA"; // Fixed courier company
-    
-    // Return data in the exact 11-field format required
+    // Simple order data structure for webhook
     return {
         "Order ID": orderId,
         "Customer Name": customerName,
         "Phone": formData.phone,
         "City": formData.city,
         "Address": formData.address,
-        "COD Amount": codAmount.toFixed(2),
-        "Tracking Number": trackingNumber,
-        "Courier": courier,
-        "Email": formData.email,
-        "Total Amount": total.toFixed(2),
+        "Total": total.toFixed(2),
         "Date": orderDate,
-        
-        // Keep additional data for internal use
-        _internal: {
-            product: {
-                name: AppState.product.name,
-                size: formData.size,
-                quantity: quantity,
-                unitPrice: AppState.product.price,
-                currency: AppState.product.currency
-            },
-            pricing: {
-                subtotal: subtotal,
-                shipping: CONFIG.shippingCost,
-                currency: AppState.product.currency
-            },
-            source: 'grindctrl-website',
-            userAgent: navigator.userAgent,
-            timestamp: Date.now()
-        }
+        "Payment Method": formData.paymentMethod,
+        "Product": AppState.product.name,
+        "Quantity": quantity,
+        "Size": formData.size,
+        "Email": formData.email,
+        "Postal Code": formData.postalCode,
+        "Currency": AppState.product.currency,
+        "Source": "grindctrl-website"
     };
 }
 
@@ -419,14 +378,7 @@ function generateOrderId() {
     return `GC-${timestamp}-${randomStr}`.toUpperCase();
 }
 
-/**
- * Generate random tracking number
- */
-function generateTrackingNumber() {
-    const prefix = 'TRK';
-    const randomNum = Math.floor(Math.random() * 1000000000); // 9-digit number
-    return `${prefix}${randomNum.toString().padStart(9, '0')}`;
-}
+// Removed tracking number and courier functions (not needed)
 
 /**
  * Send order data to n8n webhook
@@ -477,7 +429,7 @@ async function sendOrderToWebhook(orderData) {
         return {
             success: true,
             data: responseData,
-            orderId: orderData.orderId
+            orderId: orderData["Order ID"]
         };
         
     } catch (error) {
@@ -509,12 +461,11 @@ function showOrderSuccess(orderData) {
         <h4>Order Details</h4>
         <p><strong>Order ID:</strong> ${orderData["Order ID"]}</p>
         <p><strong>Customer:</strong> ${orderData["Customer Name"]}</p>
-        <p><strong>Product:</strong> ${orderData._internal.product.name}</p>
-        <p><strong>Size:</strong> ${orderData._internal.product.size}</p>
-        <p><strong>Quantity:</strong> ${orderData._internal.product.quantity}</p>
-        <p><strong>Total Amount:</strong> ${orderData["Total Amount"]} EGP</p>
-        <p><strong>COD Amount:</strong> ${orderData["COD Amount"]} EGP</p>
-        <p><strong>Email:</strong> ${orderData["Email"]}</p>
+        <p><strong>Product:</strong> ${orderData["Product"]}</p>
+        <p><strong>Size:</strong> ${orderData["Size"]}</p>
+        <p><strong>Quantity:</strong> ${orderData["Quantity"]}</p>
+        <p><strong>Total Amount:</strong> ${orderData["Total"]} ${orderData["Currency"]}</p>
+        <p><strong>Payment Method:</strong> ${orderData["Payment Method"]}</p>
     `;
     
     modal.style.display = 'flex';
@@ -738,6 +689,29 @@ function initializeSmoothScrolling() {
 }
 
 /**
+ * Admin Panel Functions
+ */
+function toggleAdminPanel() {
+    const modal = document.getElementById('adminModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        loadAdminData();
+    }
+}
+
+function closeAdminPanel() {
+    const modal = document.getElementById('adminModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function loadAdminData() {
+    // This will be implemented when the admin functionality is added
+    console.log('Loading admin data...');
+}
+
+/**
  * Handle window resize events
  */
 window.addEventListener('resize', function() {
@@ -774,5 +748,7 @@ window.addEventListener('error', function(event) {
 // Export functions for global access
 window.closeModal = closeModal;
 window.hideNotification = hideNotification;
+window.toggleAdminPanel = toggleAdminPanel;
+window.closeAdminPanel = closeAdminPanel;
 
 console.log('GrindCTRL JavaScript loaded successfully');
