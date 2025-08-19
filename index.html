@@ -11,7 +11,7 @@
     <meta property="og:title" content="Luxury Cropped Black T-Shirt | GrindCTRL">
     <meta property="og:description" content="Premium cotton luxury cropped black t-shirt. Minimal design, maximum comfort.">
     <meta property="og:type" content="product">
-    <meta property="og:url" content="https://grindctrlshop.free.fi">
+    <meta property="og:url" content="https://yourusername.github.io/grindctrl-shop">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
     
     <!-- Configuration -->
     <script src="config.js"></script>
@@ -56,7 +56,7 @@
                     <!-- Product Image -->
                     <div class="product-image-container">
                         <div class="product-image">
-                            <img src="assets/product-main.png" alt="Luxury Cropped Black T-Shirt" id="productImage">
+                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Luxury Cropped Black T-Shirt" id="productImage">
                         </div>
                         <div class="product-tags">
                             <span class="tag">Hot Drop</span>
@@ -145,6 +145,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label for="paymentMethod">Payment Method *</label>
+                                <select id="paymentMethod" name="paymentMethod" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option value="COD">Cash on Delivery</option>
+                                    <option value="Card">Credit/Debit Card</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </div>
 
                             <div class="order-summary">
                                 <div class="summary-row">
@@ -215,6 +224,7 @@
                     <a href="#terms">Terms of Service</a>
                     <a href="#returns">Returns</a>
                     <a href="#contact">Contact</a>
+                    <a href="#admin" onclick="toggleAdminPanel()">Admin</a>
                 </div>
             </div>
         </div>
@@ -254,6 +264,48 @@
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Dashboard</h2>
+                <button class="modal-close" onclick="closeAdminPanel()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-stats">
+                    <div class="stat-item">
+                        <h4>Total Orders</h4>
+                        <span id="totalOrders">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Pending Orders</h4>
+                        <span id="pendingOrders">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Revenue</h4>
+                        <span id="totalRevenue">0 EGP</span>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="btn btn-secondary" onclick="refreshOrders()">
+                        <i class="fas fa-sync"></i>
+                        Refresh Data
+                    </button>
+                    <button class="btn btn-primary" onclick="clearOrderHistory()">
+                        <i class="fas fa-trash"></i>
+                        Clear History
+                    </button>
+                </div>
+                <div class="orders-table">
+                    <h4>Recent Orders</h4>
+                    <div id="ordersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="order-manager.js"></script>
+    <script src="webhook-handler.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
