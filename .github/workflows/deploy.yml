@@ -23,12 +23,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'  # Adjust Node version as needed
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build  # Adjust build command if different
+
     - name: Configure webhook URL
       run: |
-        # Replace placeholder with actual webhook URL from GitHub secrets
         if [ -n "${{ secrets.N8N_WEBHOOK_URL }}" ]; then
           sed -i "s|window.CONFIG.WEBHOOK_URL = '123';|window.CONFIG.WEBHOOK_URL = '${{ secrets.N8N_WEBHOOK_URL }}';|g" config.js
         fi
@@ -36,8 +43,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: '.'
-        
+        path: './dist'  # Change to your build output directory (e.g., dist, build, public)
+
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
