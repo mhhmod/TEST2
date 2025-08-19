@@ -242,7 +242,7 @@ function getFormData() {
 function validateForm(data) {
     const requiredFields = [
         'size', 'quantity', 'firstName', 'lastName', 
-        'email', 'phone', 'address', 'city', 'postalCode', 'codAmount'
+        'email', 'phone', 'address', 'city', 'postalCode'
     ];
     
     return validateRequiredFields(requiredFields) && validateEmailFormat(data.email);
@@ -353,10 +353,7 @@ function getFieldLabel(fieldName) {
         phone: 'Phone Number',
         address: 'Shipping Address',
         city: 'City',
-        postalCode: 'Postal Code',
-        codAmount: 'COD Amount',
-        trackingNumber: 'Tracking Number',
-        courier: 'Courier Company'
+        postalCode: 'Postal Code'
     };
     
     return labels[fieldName] || fieldName;
@@ -371,8 +368,12 @@ function prepareOrderData(formData) {
     const total = subtotal + CONFIG.shippingCost;
     const customerName = `${formData.firstName} ${formData.lastName}`.trim();
     const orderId = generateOrderId();
-    const codAmount = parseFloat(formData.codAmount) || 0;
     const orderDate = new Date().toISOString();
+    
+    // Auto-generate system values
+    const codAmount = total; // COD Amount = Total Amount
+    const trackingNumber = generateTrackingNumber();
+    const courier = "BOSTA"; // Fixed courier company
     
     // Return data in the exact 11-field format required
     return {
@@ -382,8 +383,8 @@ function prepareOrderData(formData) {
         "City": formData.city,
         "Address": formData.address,
         "COD Amount": codAmount.toFixed(2),
-        "Tracking Number": formData.trackingNumber || "",
-        "Courier": formData.courier || "",
+        "Tracking Number": trackingNumber,
+        "Courier": courier,
         "Email": formData.email,
         "Total Amount": total.toFixed(2),
         "Date": orderDate,
@@ -416,6 +417,15 @@ function generateOrderId() {
     const timestamp = Date.now().toString(36);
     const randomStr = Math.random().toString(36).substring(2, 8);
     return `GC-${timestamp}-${randomStr}`.toUpperCase();
+}
+
+/**
+ * Generate random tracking number
+ */
+function generateTrackingNumber() {
+    const prefix = 'TRK';
+    const randomNum = Math.floor(Math.random() * 1000000000); // 9-digit number
+    return `${prefix}${randomNum.toString().padStart(9, '0')}`;
 }
 
 /**
