@@ -242,7 +242,7 @@ function getFormData() {
 function validateForm(data) {
     const requiredFields = [
         'size', 'quantity', 'firstName', 'lastName', 
-        'email', 'phone', 'address', 'city', 'postalCode'
+        'email', 'phone', 'address', 'city', 'postalCode', 'codAmount'
     ];
     
     return validateRequiredFields(requiredFields) && validateEmailFormat(data.email);
@@ -353,7 +353,10 @@ function getFieldLabel(fieldName) {
         phone: 'Phone Number',
         address: 'Shipping Address',
         city: 'City',
-        postalCode: 'Postal Code'
+        postalCode: 'Postal Code',
+        codAmount: 'COD Amount',
+        trackingNumber: 'Tracking Number',
+        courier: 'Courier Company'
     };
     
     return labels[fieldName] || fieldName;
@@ -366,37 +369,43 @@ function prepareOrderData(formData) {
     const quantity = parseInt(formData.quantity);
     const subtotal = AppState.product.price * quantity;
     const total = subtotal + CONFIG.shippingCost;
+    const customerName = `${formData.firstName} ${formData.lastName}`.trim();
+    const orderId = generateOrderId();
+    const codAmount = parseFloat(formData.codAmount) || 0;
+    const orderDate = new Date().toISOString();
     
+    // Return data in the exact 11-field format required
     return {
-        orderDate: new Date().toISOString(),
-        orderId: generateOrderId(),
-        customer: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone
-        },
-        shipping: {
-            address: formData.address,
-            city: formData.city,
-            postalCode: formData.postalCode
-        },
-        product: {
-            name: AppState.product.name,
-            size: formData.size,
-            quantity: quantity,
-            unitPrice: AppState.product.price,
-            currency: AppState.product.currency
-        },
-        pricing: {
-            subtotal: subtotal,
-            shipping: CONFIG.shippingCost,
-            total: total,
-            currency: AppState.product.currency
-        },
-        source: 'grindctrl-website',
-        userAgent: navigator.userAgent,
-        timestamp: Date.now()
+        "Order ID": orderId,
+        "Customer Name": customerName,
+        "Phone": formData.phone,
+        "City": formData.city,
+        "Address": formData.address,
+        "COD Amount": codAmount.toFixed(2),
+        "Tracking Number": formData.trackingNumber || "",
+        "Courier": formData.courier || "",
+        "Email": formData.email,
+        "Total Amount": total.toFixed(2),
+        "Date": orderDate,
+        
+        // Keep additional data for internal use
+        _internal: {
+            product: {
+                name: AppState.product.name,
+                size: formData.size,
+                quantity: quantity,
+                unitPrice: AppState.product.price,
+                currency: AppState.product.currency
+            },
+            pricing: {
+                subtotal: subtotal,
+                shipping: CONFIG.shippingCost,
+                currency: AppState.product.currency
+            },
+            source: 'grindctrl-website',
+            userAgent: navigator.userAgent,
+            timestamp: Date.now()
+        }
     };
 }
 
@@ -488,12 +497,14 @@ function showOrderSuccess(orderData) {
     // Populate order details
     orderDetails.innerHTML = `
         <h4>Order Details</h4>
-        <p><strong>Order ID:</strong> ${orderData.orderId}</p>
-        <p><strong>Product:</strong> ${orderData.product.name}</p>
-        <p><strong>Size:</strong> ${orderData.product.size}</p>
-        <p><strong>Quantity:</strong> ${orderData.product.quantity}</p>
-        <p><strong>Total:</strong> ${orderData.pricing.total} ${orderData.pricing.currency}</p>
-        <p><strong>Email:</strong> ${orderData.customer.email}</p>
+        <p><strong>Order ID:</strong> ${orderData["Order ID"]}</p>
+        <p><strong>Customer:</strong> ${orderData["Customer Name"]}</p>
+        <p><strong>Product:</strong> ${orderData._internal.product.name}</p>
+        <p><strong>Size:</strong> ${orderData._internal.product.size}</p>
+        <p><strong>Quantity:</strong> ${orderData._internal.product.quantity}</p>
+        <p><strong>Total Amount:</strong> ${orderData["Total Amount"]} EGP</p>
+        <p><strong>COD Amount:</strong> ${orderData["COD Amount"]} EGP</p>
+        <p><strong>Email:</strong> ${orderData["Email"]}</p>
     `;
     
     modal.style.display = 'flex';
