@@ -197,6 +197,9 @@ async function handleFormSubmission(event) {
     setLoadingState(true);
     
     try {
+        // Debug: Log form data to see what we're getting
+        console.log('Form data received:', formData);
+        
         // Prepare order data for webhook
         const orderData = prepareOrderData(formData);
         
@@ -364,6 +367,9 @@ function getFieldLabel(fieldName) {
  * Prepare order data for webhook - Updated to match Excel columns exactly
  */
 function prepareOrderData(formData) {
+    console.log('DEBUG: Form data in prepareOrderData:', formData);
+    console.log('DEBUG: Size value:', formData.size);
+    
     const quantity = parseInt(formData.quantity);
     const subtotal = AppState.product.price * quantity;
     const total = subtotal + CONFIG.shippingCost;
@@ -375,6 +381,10 @@ function prepareOrderData(formData) {
     const codAmount = total; // COD Amount = Total Amount
     const trackingNumber = generateTrackingNumber();
     const courier = "BOSTA"; // Fixed courier company
+    
+    // Create product name with size
+    const productName = formData.size ? `${AppState.product.name} - ${formData.size}` : AppState.product.name;
+    console.log('DEBUG: Final product name:', productName);
     
     // Return data in the exact 14-field format required for Excel
     return {
@@ -390,7 +400,7 @@ function prepareOrderData(formData) {
         "Date": orderDate,
         "Status": "New", // System-generated status - always starts as "New"
         "Payment Method": formData.paymentMethod,
-        "Product": AppState.product.name,
+        "Product": productName,
         "Quantity": quantity.toString()
     };
 }
