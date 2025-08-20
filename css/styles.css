@@ -275,13 +275,6 @@ body {
     box-shadow: var(--shadow-light);
 }
 
-.order-form h3 {
-    color: var(--text-color);
-    margin-bottom: var(--spacing-lg);
-    font-family: var(--font-secondary);
-    font-size: 1.5rem;
-}
-
 .form-group {
     margin-bottom: var(--spacing-md);
 }
@@ -382,7 +375,6 @@ input:invalid, select:invalid, textarea:invalid {
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--spacing-sm);
-    color: var(--text-color);
 }
 
 .summary-row.total {
@@ -468,13 +460,6 @@ input:invalid, select:invalid, textarea:invalid {
     border-top: 1px solid var(--border-color);
 }
 
-.product-details h2 {
-    color: var(--text-color);
-    font-family: var(--font-secondary);
-    font-size: 2rem;
-    margin-bottom: var(--spacing-lg);
-}
-
 .details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -526,7 +511,6 @@ input:invalid, select:invalid, textarea:invalid {
     text-decoration: none;
     opacity: 0.8;
     transition: opacity var(--transition-fast);
-    cursor: pointer;
 }
 
 .footer-links a:hover {
@@ -539,7 +523,7 @@ input:invalid, select:invalid, textarea:invalid {
     position: fixed;
     top: var(--spacing-md);
     right: var(--spacing-md);
-    background: var(--light-grey);
+    background: white;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-heavy);
     padding: var(--spacing-md);
@@ -547,7 +531,6 @@ input:invalid, select:invalid, textarea:invalid {
     min-width: 300px;
     border-left: 4px solid var(--success-color);
     animation: slideIn 0.3s ease;
-    color: var(--text-color);
 }
 
 .notification.error {
@@ -603,7 +586,7 @@ input:invalid, select:invalid, textarea:invalid {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -612,14 +595,13 @@ input:invalid, select:invalid, textarea:invalid {
 }
 
 .modal-content {
-    background: var(--light-grey);
+    background: white;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-heavy);
-    max-width: 800px;
+    max-width: 500px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
 }
 
 .modal-header {
@@ -632,7 +614,7 @@ input:invalid, select:invalid, textarea:invalid {
 
 .modal-header h2 {
     font-family: var(--font-secondary);
-    color: var(--text-color);
+    color: var(--primary-color);
     margin: 0;
 }
 
@@ -641,7 +623,7 @@ input:invalid, select:invalid, textarea:invalid {
     border: none;
     cursor: pointer;
     color: var(--text-color);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: var(--spacing-xs);
     opacity: 0.6;
     transition: opacity var(--transition-fast);
@@ -653,28 +635,25 @@ input:invalid, select:invalid, textarea:invalid {
 
 .modal-body {
     padding: var(--spacing-lg);
-    color: var(--text-color);
+    text-align: center;
 }
 
 .success-icon {
     font-size: 4rem;
     color: var(--success-color);
     margin-bottom: var(--spacing-md);
-    text-align: center;
 }
 
 .modal-body p {
     margin-bottom: var(--spacing-md);
-    text-align: center;
 }
 
 .order-details {
-    background: var(--background-color);
+    background: var(--light-grey);
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     margin: var(--spacing-md) 0;
     text-align: left;
-    border: 1px solid var(--border-color);
 }
 
 .order-details h4 {
@@ -691,109 +670,11 @@ input:invalid, select:invalid, textarea:invalid {
     font-size: 0.875rem;
     opacity: 0.7;
     font-style: italic;
-    text-align: center;
 }
 
 .modal-footer {
     padding: var(--spacing-lg);
     border-top: 1px solid var(--border-color);
-    text-align: center;
-}
-
-/* Admin Panel Styles */
-.admin-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.stat-item {
-    background: var(--background-color);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    text-align: center;
-    border: 1px solid var(--border-color);
-}
-
-.stat-item h4 {
-    color: var(--text-color);
-    margin-bottom: var(--spacing-xs);
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
-
-.stat-item span {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.admin-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.admin-actions .btn {
-    flex: 1;
-}
-
-.orders-table {
-    margin-top: var(--spacing-lg);
-}
-
-.orders-table h4 {
-    color: var(--text-color);
-    margin-bottom: var(--spacing-md);
-}
-
-.order-item {
-    background: var(--background-color);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-sm);
-    border: 1px solid var(--border-color);
-}
-
-.order-item h5 {
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-xs);
-}
-
-.order-item p {
-    font-size: 0.9rem;
-    margin-bottom: var(--spacing-xs);
-    color: var(--text-color);
-}
-
-.order-status {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: var(--radius-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.order-status.pending {
-    background: var(--warning-color);
-    color: white;
-}
-
-.order-status.processing {
-    background: var(--primary-color);
-    color: white;
-}
-
-.order-status.shipped {
-    background: var(--success-color);
-    color: white;
-}
-
-.order-status.delivered {
-    background: var(--success-color);
-    color: white;
 }
 
 /* Animations */
@@ -870,10 +751,6 @@ input:invalid, select:invalid, textarea:invalid {
         left: var(--spacing-md);
         min-width: auto;
     }
-    
-    .admin-actions {
-        flex-direction: column;
-    }
 }
 
 @media (max-width: 480px) {
@@ -925,9 +802,9 @@ input:invalid, select:invalid, textarea:invalid {
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
     :root {
-        --border-color: #ffffff;
-        --text-color: #ffffff;
-        --background-color: #000000;
+        --border-color: #000000;
+        --text-color: #000000;
+        --background-color: #ffffff;
     }
 }
 

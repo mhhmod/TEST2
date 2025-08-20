@@ -1,250 +1,163 @@
-# GrindCTRL - Luxury Cropped Black T-Shirt E-commerce Store
+# GrindCTRL - T-Shirt E-commerce Site
 
-A minimal, single-product e-commerce website for selling luxury cropped black t-shirts. Built with vanilla HTML, CSS, and JavaScript, designed specifically for GitHub Pages deployment with n8n webhook integration.
+A minimal, single-product e-commerce website for selling luxury cropped black t-shirts. Built with vanilla HTML, CSS, and JavaScript, designed specifically for static hosting on GitHub Pages with n8n webhook integration.
 
-## 🚀 Features
+## Features
 
 - **Single Product Focus**: Clean, focused product page for luxury cropped black t-shirt
 - **Dark Theme Design**: Modern dark aesthetic matching contemporary fashion e-commerce
 - **Responsive Design**: Mobile-first approach with seamless desktop experience
 - **Cart Functionality**: Add to cart with quantity management and visual feedback
 - **Order Processing**: Direct integration with n8n webhook for automated order handling
-- **Excel Export**: Complete order data export functionality
-- **Admin Dashboard**: Order management and status tracking
 - **Form Validation**: Client-side validation for customer information and order details
 - **Static Deployment**: Fully compatible with GitHub Pages - no server required
 
-## 🛠 Technology Stack
+## Technology Stack
 
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
 - **Fonts**: Google Fonts (Inter & Poppins)
 - **Icons**: Font Awesome 6
-- **Excel Export**: SheetJS (xlsx)
 - **Deployment**: GitHub Pages with automated CI/CD
 - **Order Processing**: n8n webhook integration
 
-## 📋 Excel Column Structure
+## Quick Start
 
-Orders are exported with the following exact structure:
-```
-Order ID, Customer Name, Phone, City, Address, COD Amount, Tracking Number, Courier, Total, Date, Status, Payment Method, Product, Quantity
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/grindctrl-shop.git
+   cd grindctrl-shop
+   ```
 
-### System-Generated Fields
-- **COD Amount**: Auto-calculated (5% of total for COD orders)
-- **Tracking Number**: Unique identifier (TRK + 9-digit number)
-- **Total**: Complete calculation with taxes and delivery
-- **Status**: Order lifecycle (Pending → Processing → Shipped → Delivered)
+2. **Configure webhook URL**
+   Update the webhook URL in `config.js`:
+   ```javascript
+   window.CONFIG.WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/order-processing';
+   ```
 
-## 🚀 Quick Setup for GitHub Pages
+3. **Add GitHub Secret (for automatic deployment)**
+   - Go to your repository settings
+   - Navigate to "Secrets and variables" → "Actions"
+   - Add a new repository secret:
+     - Name: `N8N_WEBHOOK_URL`
+     - Value: Your actual n8n webhook URL
 
-### 1. Fork or Clone Repository
-```bash
-git clone https://github.com/yourusername/grindctrl-shop.git
-cd grindctrl-shop
-```
+4. **Deploy to GitHub Pages**
+   - Push to your repository
+   - Enable GitHub Pages in repository settings
+   - GitHub Actions will automatically deploy your site with the webhook configured
 
-### 2. Configure Webhook URL
-Update the webhook URL in `config.js`:
-```javascript
-window.CONFIG.WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/grindctrl-orders';
-```
-
-### 3. Enable GitHub Pages
-1. Go to repository **Settings**
-2. Navigate to **Pages** section
-3. Source: **Deploy from a branch**
-4. Branch: **main** (or **master**)
-5. Folder: **/ (root)**
-
-### 4. Your Site is Live!
-Your store will be available at: `https://yourusername.github.io/grindctrl-shop`
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── index.html              # Main product page
-├── styles.css              # Dark theme styling and responsive design
-├── config.js               # Configuration (webhook URL, product settings)
-├── main.js                 # Core application logic and form handling
-├── order-manager.js        # Order processing and management
-├── excel-export.js         # Excel export functionality
-├── webhook-handler.js      # n8n webhook integration
-├── script.js               # Additional UI interactions and admin panel
-├── server.js               # Optional: Local development server
-├── README.md               # This file
-└── .github/workflows/      # Optional: GitHub Actions for automated deployment
+├── css/
+│   └── styles.css          # Complete styling with dark theme
+├── js/
+│   └── main.js             # Cart functionality & webhook integration
+├── assets/
+│   ├── product-main.png    # Product image
+│   └── product-image.svg   # Fallback SVG illustration
+├── .github/
+│   └── workflows/
+│       └── deploy.yml      # GitHub Pages deployment
+└── README.md
 ```
 
-## ⚙️ Configuration
+## Configuration
 
-### Product Settings (config.js)
+### Webhook Integration
+
+The site integrates with n8n for order processing. Update the webhook URL in `js/main.js`:
+
 ```javascript
-window.CONFIG.PRODUCT = {
-    name: 'Luxury Cropped Black T-Shirt',
-    price: 300.00,
-    currency: 'EGP',
-    originalPrice: 350.00,
-    deliveryCharges: 0, // Free shipping
-    maxQuantity: 10
-};
-```
-
-### Order Processing Settings
-```javascript
-window.CONFIG.ORDER = {
-    codChargePercentage: 5, // 5% COD charges
-    trackingNumberPrefix: 'GC',
-    defaultStatus: 'Pending',
-    statusOptions: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
-};
-```
-
-## 📊 Order Data Structure
-
-Orders sent to the webhook include the complete Excel-compatible format:
-
-```json
-{
-  "Order ID": "GC-ABC123-XYZ789",
-  "Customer Name": "John Doe",
-  "Phone": "+1234567890",
-  "City": "Cairo",
-  "Address": "123 Main St",
-  "COD Amount": "315.00",
-  "Tracking Number": "TRK123456789",
-  "Courier": "BOSTA",
-  "Total": "300.00",
-  "Date": "2025-01-19T10:30:00.000Z",
-  "Status": "Pending",
-  "Payment Method": "COD",
-  "Product": "Luxury Cropped Black T-Shirt",
-  "Quantity": 1
+function getWebhookUrl() {
+    const fallbackWebhook = 'YOUR_N8N_WEBHOOK_URL_HERE';
+    return fallbackWebhook;
 }
 ```
 
-## 🎨 Customization
+### Product Information
 
-### Colors & Theme (styles.css)
+Product details are configured in `js/main.js`:
+
+```javascript
+const AppState = {
+    product: {
+        name: 'Luxury Cropped Black T-Shirt',
+        price: 300.00,
+        currency: 'EGP',
+        originalPrice: 350.00
+    }
+};
+```
+
+## Order Data Structure
+
+Orders sent to the webhook include:
+
+```json
+{
+  "orderDate": "2025-01-19T10:30:00.000Z",
+  "orderId": "GC-ABC123-XYZ789",
+  "customer": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890"
+  },
+  "shipping": {
+    "address": "123 Main St",
+    "city": "Cairo",
+    "postalCode": "12345"
+  },
+  "product": {
+    "name": "Luxury Cropped Black T-Shirt",
+    "size": "M",
+    "quantity": 2,
+    "unitPrice": 300.00,
+    "currency": "EGP"
+  },
+  "pricing": {
+    "subtotal": 600.00,
+    "shipping": 0,
+    "total": 600.00,
+    "currency": "EGP"
+  }
+}
+```
+
+## Customization
+
+### Colors & Theme
+
+The dark theme colors are defined in CSS custom properties:
+
 ```css
 :root {
-    --primary-color: #E74C3C;      /* Coral red accent */
-    --background-color: #1a1a1a;   /* Dark background */
-    --text-color: #ffffff;         /* White text */
-    --light-grey: #2a2a2a;        /* Dark grey cards */
-    --border-color: #404040;       /* Border grey */
+    --primary-color: #E74C3C;    /* Coral red accent */
+    --background-color: #1a1a1a;  /* Dark background */
+    --text-color: #ffffff;        /* White text */
+    --light-grey: #2a2a2a;       /* Dark grey cards */
+    --border-color: #404040;      /* Border grey */
 }
 ```
 
 ### Product Image
-Replace the image URL in `index.html` or add your product image to the repository and update the src attribute.
 
-## 🔧 n8n Webhook Setup
+Replace `assets/product-main.png` with your product image. Recommended dimensions: 800x800px minimum.
 
-### 1. Create Webhook Trigger
-- Add a **Webhook** trigger node in your n8n workflow
-- Set method to **POST**
-- Copy the **Production URL**
-
-### 2. Update Configuration
-Replace the webhook URL in `config.js` with your n8n webhook URL:
-```javascript
-window.CONFIG.WEBHOOK_URL = 'https://your-n8n-instance.com/webhook/your-webhook-id';
-```
-
-### 3. Process Order Data
-Your n8n workflow will receive the complete order data in Excel-compatible format, ready for:
-- Email notifications
-- Database storage
-- Excel file generation
-- Inventory management
-- Customer communication
-
-## 💾 Local Development
-
-### Option 1: Simple HTTP Server (Python)
-```bash
-python -m http.server 8000
-# Visit http://localhost:8000
-```
-
-### Option 2: Node.js Server (Included)
-```bash
-npm install express
-node server.js
-# Visit http://localhost:5000
-```
-
-### Option 3: Live Server (VS Code Extension)
-Install the "Live Server" extension and click "Go Live" in VS Code.
-
-## 📱 Browser Support
+## Browser Support
 
 - Chrome 80+
 - Firefox 75+
 - Safari 13+
 - Edge 80+
 
-## 🔒 Security & Privacy
-
-- All form data is validated client-side before submission
-- Webhook communication uses HTTPS
-- No sensitive data is stored in localStorage
-- Order data is sent directly to your configured n8n webhook
-
-## 📈 Analytics Integration
-
-To add Google Analytics or other tracking:
-
-1. Add tracking script to `index.html` head section
-2. Add event tracking to order completion in `main.js`
-3. Track cart additions and product views as needed
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Orders not reaching webhook**
-   - Verify webhook URL in `config.js`
-   - Check browser console for errors
-   - Test webhook URL with a tool like Postman
-
-2. **Styling issues**
-   - Clear browser cache
-   - Check CSS file is loading properly
-   - Verify Font Awesome and Google Fonts CDN links
-
-3. **Form validation not working**
-   - Check JavaScript console for errors
-   - Ensure all required form fields have proper IDs
-   - Verify main.js is loading correctly
-
-### Debug Mode
-Open browser console to see detailed logs about:
-- Order processing
-- Webhook communication
-- Form validation
-- Cart operations
-
-## 📄 License
+## License
 
 MIT License - feel free to use for your own projects.
 
-## 🤝 Contributing
+## Support
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📞 Support
-
-For issues related to:
-- **Code/Features**: Create an issue in this repository
-- **n8n Integration**: Refer to [n8n documentation](https://docs.n8n.io/)
-- **GitHub Pages**: Check [GitHub Pages documentation](https://docs.github.com/en/pages)
-
----
-
-**Built with ❤️ for the GrindCTRL brand**
+For issues related to the codebase, please create an issue in this repository.
+For n8n webhook setup, refer to the [n8n documentation](https://docs.n8n.io/).
