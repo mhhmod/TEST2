@@ -362,7 +362,7 @@ function prepareOrderData(formData) {
     const orderDate = new Date().toISOString();
     
     // Auto-generate system values
-    const codAmount = total; // COD Amount = Total Amount
+    const codAmount = formData.paymentMethod === "Cash on Delivery" ? total : 0; / //const codAmount = total; // COD Amount = Total Amount
     const trackingNumber = generateTrackingNumber();
     const courier = "BOSTA"; // Fixed courier company
     
