@@ -1,57 +1,66 @@
-# Overview
+# GrindCTRL E-commerce Site - Order Form Enhancement
 
-GrindCTRL is a single-product e-commerce website built as a static web application for selling luxury cropped black t-shirts. The project uses vanilla HTML, CSS, and JavaScript to create a minimal, elegant shopping experience with cart functionality and order processing through webhooks. The application is designed to be deployed on static hosting platforms like GitHub Pages.
+## Repository Description
+Enhance existing single-product website order form to capture all required Excel column data without changing file structure or logic
 
-# User Preferences
+## Project Overview
+GrindCTRL is a single-product e-commerce website for luxury cropped black t-shirts. The site currently processes orders through n8n webhooks but needs enhancement to capture all Excel column data fields.
 
-Preferred communication style: Simple, everyday language.
+## Current Excel Requirements
+**Excel Columns Required:**
+- Order ID *(auto-generated)*
+- Customer Name *(customer input)*
+- Phone *(customer input)*  
+- City *(customer input)*
+- Address *(customer input)*
+- COD Amount *(auto-calculated)*
+- Tracking Number *(auto-generated)*
+- Courier *(auto-generated)*
+- Total *(auto-calculated)*
+- Date *(auto-generated)*
+- Status *(customer/system input)*
+- Payment Method *(customer selection)*
+- Product *(customer selection)*
+- Quantity *(customer input)*
 
-# System Architecture
+## Current Form Analysis (Updated)
+**Currently Captured:**
+- Customer Name (firstName + lastName)
+- Phone
+- City
+- Address
+- Quantity
+- Payment Method (customer selection) ✓ ADDED
+- Size (not in Excel requirements)
+- Email (not in Excel requirements)
+- Postal Code (not in Excel requirements)
 
-## Frontend Architecture
-- **Static Single Page Application**: Built with vanilla HTML, CSS, and JavaScript without frameworks
-- **Responsive Design**: Mobile-first approach using CSS Grid and Flexbox
-- **Component-Based Styling**: CSS custom properties (CSS variables) for consistent theming and easy maintenance
-- **Font Integration**: Google Fonts (Inter and Poppins) and Font Awesome icons for enhanced typography and iconography
+**System-Generated Fields:**
+- Order ID (auto-generated)
+- Status (system-controlled - starts as "New") ✓ IMPLEMENTED
+- Product (auto-filled as "Luxury Cropped Black T-Shirt")
+- COD Amount (auto-calculated from total)
+- Tracking Number (auto-generated)
+- Courier (auto-set as "BOSTA")
+- Total (auto-calculated)
+- Date (auto-generated)
 
-## State Management
-- **Client-Side State**: Global AppState object manages cart items, product information, and application status
-- **Local Storage**: Persistence layer for cart data across browser sessions
-- **Event-Driven Updates**: DOM manipulation through JavaScript event handlers for real-time UI updates
+**COMPLETED CHANGES:**
+✓ Added Payment Method dropdown with options
+✓ Removed Status from customer input (now system-controlled)
+✓ Updated form validation to exclude Status field
+✓ Modified webhook data structure to include all Excel columns
+✓ Status automatically set to "New" for all orders
 
-## Product Management
-- **Single Product Focus**: Hard-coded product information for the luxury cropped black t-shirt
-- **Pricing Structure**: Supports original price and discounted price display
-- **Inventory Management**: Client-side quantity validation with configurable min/max limits
+## User Preferences
+- Keep existing file structure unchanged
+- No new files or folders
+- GitHub deployment compatible
+- Simple edits only
+- Maintain existing logic and design
 
-## Order Processing
-- **n8n Webhook Integration**: Orders submitted via HTTP POST to configured n8n webhook endpoint
-- **Configuration Management**: Webhook URL configured through config.js file with GitHub Actions deployment automation
-- **Environment Variables**: N8N_WEBHOOK_URL secret configured for automatic deployment
-- **Error Handling**: Comprehensive webhook error handling with user feedback
-- **Form Validation**: Client-side validation for customer information and order details
-- **Order Data Structure**: Complete JSON payload with customer, product, and pricing information
-
-## User Experience Features
-- **Shopping Cart**: Add/remove items with visual feedback and counter updates
-- **Product Gallery**: Image carousel or gallery for product visualization
-- **Responsive Navigation**: Mobile-friendly navigation with cart icon and item count
-- **Notification System**: User feedback for actions like adding to cart or order submission
-
-# External Dependencies
-
-## Third-Party Services
-- **n8n Webhook**: Order processing and data collection endpoint
-- **Google Fonts API**: Typography assets (Inter and Poppins font families)
-- **Font Awesome CDN**: Icon library for UI elements
-- **Static Hosting**: Designed for deployment on GitHub Pages or similar static hosting services
-
-## Browser APIs
-- **Local Storage**: Cart persistence across sessions
-- **Fetch API**: HTTP requests for order submission
-- **DOM APIs**: Dynamic content updates and event handling
-
-## Development Dependencies
-- **CSS Custom Properties**: Modern CSS features for theming
-- **ES6+ JavaScript**: Modern JavaScript features including arrow functions, destructuring, and modules
-- **Responsive Design**: CSS media queries for cross-device compatibility
+## Technical Architecture
+- Static HTML/CSS/JS website
+- n8n webhook integration for order processing  
+- GitHub Pages deployment with automated CI/CD
+- Dark theme design with responsive layout

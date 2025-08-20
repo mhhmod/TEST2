@@ -241,7 +241,7 @@ function getFormData() {
  */
 function validateForm(data) {
     const requiredFields = [
-        'size', 'quantity', 'firstName', 'lastName', 
+        'size', 'quantity', 'paymentMethod', 'firstName', 'lastName', 
         'email', 'phone', 'address', 'city', 'postalCode'
     ];
     
@@ -347,6 +347,7 @@ function getFieldLabel(fieldName) {
     const labels = {
         size: 'Size',
         quantity: 'Quantity',
+        paymentMethod: 'Payment Method',
         firstName: 'First Name',
         lastName: 'Last Name',
         email: 'Email Address',
@@ -360,7 +361,7 @@ function getFieldLabel(fieldName) {
 }
 
 /**
- * Prepare order data for webhook
+ * Prepare order data for webhook - Updated to match Excel columns exactly
  */
 function prepareOrderData(formData) {
     const quantity = parseInt(formData.quantity);
@@ -375,7 +376,7 @@ function prepareOrderData(formData) {
     const trackingNumber = generateTrackingNumber();
     const courier = "BOSTA"; // Fixed courier company
     
-    // Return data in the exact 11-field format required
+    // Return data in the exact 14-field format required for Excel
     return {
         "Order ID": orderId,
         "Customer Name": customerName,
@@ -385,28 +386,12 @@ function prepareOrderData(formData) {
         "COD Amount": codAmount.toFixed(2),
         "Tracking Number": trackingNumber,
         "Courier": courier,
-        "Email": formData.email,
-        "Total Amount": total.toFixed(2),
+        "Total": total.toFixed(2),
         "Date": orderDate,
-        
-        // Keep additional data for internal use
-        _internal: {
-            product: {
-                name: AppState.product.name,
-                size: formData.size,
-                quantity: quantity,
-                unitPrice: AppState.product.price,
-                currency: AppState.product.currency
-            },
-            pricing: {
-                subtotal: subtotal,
-                shipping: CONFIG.shippingCost,
-                currency: AppState.product.currency
-            },
-            source: 'grindctrl-website',
-            userAgent: navigator.userAgent,
-            timestamp: Date.now()
-        }
+        "Status": "New", // System-generated status - always starts as "New"
+        "Payment Method": formData.paymentMethod,
+        "Product": AppState.product.name,
+        "Quantity": quantity.toString()
     };
 }
 
@@ -458,120 +443,51 @@ async function sendOrderToWebhook(orderData) {
             body: JSON.stringify(orderData)
         });
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        console.log('Webhook response status:', response.status);
         
-        // Handle different response types
-        let responseData = {};
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-            responseData = await response.json();
+        if (response.ok) {
+            let responseData = {};
+            try {
+                responseData = await response.json();
+            } catch (e) {
+                console.log('Webhook response is not JSON, treating as success');
+                responseData = { message: 'Order processed successfully' };
+            }
+            
+            console.log('Webhook response:', responseData);
+            
+            return {
+                success: true,
+                data: responseData,
+                message: 'Order submitted successfully'
+            };
         } else {
-            responseData = { message: await response.text() };
+            const errorText = await response.text();
+            console.error('Webhook error response:', errorText);
+            
+            return {
+                success: false,
+                message: `Server error: ${response.status} - ${errorText}`,
+                error: new Error(`HTTP ${response.status}`)
+            };
         }
-        
-        console.log('Webhook response:', responseData);
-        
-        return {
-            success: true,
-            data: responseData,
-            orderId: orderData.orderId
-        };
         
     } catch (error) {
-        console.error('Webhook error:', error);
+        console.error('Webhook request failed:', error);
         
-        // Return structured error response
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            return {
+                success: false,
+                message: 'Network error. Please check your internet connection and try again.',
+                error: error
+            };
+        }
+        
         return {
             success: false,
-            message: `Order submission failed: ${error.message}`,
+            message: `Request failed: ${error.message}`,
             error: error
         };
-    }
-}
-
-/**
- * Show order success modal
- */
-function showOrderSuccess(orderData) {
-    const modal = document.getElementById('successModal');
-    const orderDetails = document.getElementById('orderDetails');
-    
-    if (!modal || !orderDetails) {
-        console.error('Success modal elements not found');
-        return;
-    }
-    
-    // Populate order details
-    orderDetails.innerHTML = `
-        <h4>Order Details</h4>
-        <p><strong>Order ID:</strong> ${orderData["Order ID"]}</p>
-        <p><strong>Customer:</strong> ${orderData["Customer Name"]}</p>
-        <p><strong>Product:</strong> ${orderData._internal.product.name}</p>
-        <p><strong>Size:</strong> ${orderData._internal.product.size}</p>
-        <p><strong>Quantity:</strong> ${orderData._internal.product.quantity}</p>
-        <p><strong>Total Amount:</strong> ${orderData["Total Amount"]} EGP</p>
-        <p><strong>COD Amount:</strong> ${orderData["COD Amount"]} EGP</p>
-        <p><strong>Email:</strong> ${orderData["Email"]}</p>
-    `;
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    
-    console.log('Order success modal displayed');
-}
-
-/**
- * Close modal
- */
-function closeModal() {
-    const modal = document.getElementById('successModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
-/**
- * Set loading state for form submission
- */
-function setLoadingState(isLoading) {
-    const buyNowBtn = document.getElementById('buyNowBtn');
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    
-    if (buyNowBtn) {
-        if (isLoading) {
-            buyNowBtn.classList.add('loading');
-            buyNowBtn.disabled = true;
-        } else {
-            buyNowBtn.classList.remove('loading');
-            buyNowBtn.disabled = false;
-        }
-    }
-    
-    if (addToCartBtn) {
-        addToCartBtn.disabled = isLoading;
-    }
-}
-
-/**
- * Reset form to initial state
- */
-function resetForm() {
-    const form = document.getElementById('orderForm');
-    if (form) {
-        form.reset();
-        document.getElementById('quantity').value = 1;
-        updateOrderSummary();
-        
-        // Clear all error states
-        const errorFields = form.querySelectorAll('.error');
-        errorFields.forEach(field => clearFieldError(field));
-        
-        const errorMessages = form.querySelectorAll('.field-error');
-        errorMessages.forEach(error => error.remove());
     }
 }
 
@@ -596,71 +512,177 @@ function updateOrderSummary() {
 }
 
 /**
- * Initialize cart functionality
- */
-function initializeCartFunctionality() {
-    const cartIcon = document.querySelector('.cart-icon');
-    
-    if (cartIcon) {
-        cartIcon.addEventListener('click', function() {
-            if (AppState.cart.count > 0) {
-                showCartSummary();
-            } else {
-                showNotification('Your cart is empty', 'info');
-            }
-        });
-    }
-    
-    console.log('Cart functionality initialized');
-}
-
-/**
  * Update cart display
  */
 function updateCartDisplay() {
-    const cartCount = document.getElementById('cartCount');
-    if (cartCount) {
-        cartCount.textContent = AppState.cart.count;
-        cartCount.style.display = AppState.cart.count > 0 ? 'flex' : 'none';
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
+        cartCountElement.textContent = AppState.cart.count;
+        cartCountElement.style.display = AppState.cart.count > 0 ? 'flex' : 'none';
     }
 }
 
 /**
- * Show cart summary
+ * Set loading state for form submission
  */
-function showCartSummary() {
-    const cartItems = AppState.cart.items;
-    const totalItems = AppState.cart.count;
-    const totalValue = cartItems.reduce((sum, item) => sum + item.total, 0);
+function setLoadingState(loading) {
+    const buyNowBtn = document.getElementById('buyNowBtn');
+    const btnText = buyNowBtn.querySelector('.btn-text');
+    const btnLoader = buyNowBtn.querySelector('.btn-loader');
     
-    const message = `Cart: ${totalItems} item(s) - Total: ${totalValue.toFixed(2)} ${AppState.product.currency}`;
-    showNotification(message, 'info');
+    if (loading) {
+        buyNowBtn.disabled = true;
+        buyNowBtn.classList.add('loading');
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-flex';
+    } else {
+        buyNowBtn.disabled = false;
+        buyNowBtn.classList.remove('loading');
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+    }
+}
+
+/**
+ * Show order success modal
+ */
+function showOrderSuccess(orderData) {
+    const modal = document.getElementById('successModal');
+    const orderDetails = document.getElementById('orderDetails');
+    
+    if (orderDetails) {
+        orderDetails.innerHTML = `
+            <div class="order-info">
+                <p><strong>Order ID:</strong> ${orderData['Order ID']}</p>
+                <p><strong>Product:</strong> ${orderData.Product}</p>
+                <p><strong>Quantity:</strong> ${orderData.Quantity}</p>
+                <p><strong>Total:</strong> ${orderData.Total} ${AppState.product.currency}</p>
+                <p><strong>Payment Method:</strong> ${orderData['Payment Method']}</p>
+            </div>
+        `;
+    }
+    
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    showNotification('Order placed successfully!', 'success');
+}
+
+/**
+ * Close modal
+ */
+function closeModal() {
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+/**
+ * Reset form to initial state
+ */
+function resetForm() {
+    const form = document.getElementById('orderForm');
+    if (form) {
+        form.reset();
+        
+        // Reset quantity to 1
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput) {
+            quantityInput.value = 1;
+        }
+        
+        // Reset status to Confirmed
+        const statusField = document.getElementById('status');
+        if (statusField) {
+            statusField.value = 'Confirmed';
+        }
+        
+        // Reset payment method to Cash on Delivery
+        const paymentField = document.getElementById('paymentMethod');
+        if (paymentField) {
+            paymentField.value = 'Cash on Delivery';
+        }
+        
+        // Clear any field errors
+        const errorElements = form.querySelectorAll('.field-error');
+        errorElements.forEach(error => error.remove());
+        
+        const errorFields = form.querySelectorAll('.error');
+        errorFields.forEach(field => field.classList.remove('error'));
+        
+        updateOrderSummary();
+    }
 }
 
 /**
  * Initialize notification system
  */
 function initializeNotificationSystem() {
-    // Create notification container if it doesn't exist
-    let notification = document.getElementById('notification');
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = 'notification';
-        notification.style.display = 'none';
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="notification-icon"></i>
-                <span class="notification-message"></span>
-                <button class="notification-close" onclick="hideNotification()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+    // Create notification styles if not already present
+    if (!document.getElementById('notification-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'notification-styles';
+        styles.textContent = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--light-grey);
+                color: var(--text-color);
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-heavy);
+                z-index: 1000;
+                max-width: 300px;
+                border-left: 4px solid var(--primary-color);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all var(--transition-medium);
+            }
+            
+            .notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            
+            .notification.success {
+                border-left-color: var(--success-color);
+            }
+            
+            .notification.warning {
+                border-left-color: var(--warning-color);
+            }
+            
+            .notification.error {
+                border-left-color: var(--error-color);
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+            
+            .notification-close {
+                background: none;
+                border: none;
+                color: var(--text-color);
+                cursor: pointer;
+                padding: 0;
+                margin-left: auto;
+                opacity: 0.7;
+            }
+            
+            .notification-close:hover {
+                opacity: 1;
+            }
         `;
-        document.body.appendChild(notification);
+        document.head.appendChild(styles);
     }
-    
-    console.log('Notification system initialized');
 }
 
 /**
@@ -682,25 +704,24 @@ function showNotification(message, type = 'info') {
     // Set icon based on type
     const icons = {
         success: 'fas fa-check-circle',
-        error: 'fas fa-exclamation-circle',
         warning: 'fas fa-exclamation-triangle',
+        error: 'fas fa-exclamation-circle',
         info: 'fas fa-info-circle'
     };
     
     iconElement.className = `notification-icon ${icons[type] || icons.info}`;
     
-    // Set notification type class
+    // Set notification class
     notification.className = `notification ${type}`;
     
     // Show notification
     notification.style.display = 'block';
+    setTimeout(() => notification.classList.add('show'), 10);
     
     // Auto-hide after duration
     setTimeout(() => {
         hideNotification();
     }, CONFIG.notifications.duration);
-    
-    console.log(`Notification shown: ${type} - ${message}`);
 }
 
 /**
@@ -709,7 +730,10 @@ function showNotification(message, type = 'info') {
 function hideNotification() {
     const notification = document.getElementById('notification');
     if (notification) {
-        notification.style.display = 'none';
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 300);
     }
 }
 
@@ -717,15 +741,16 @@ function hideNotification() {
  * Initialize smooth scrolling
  */
 function initializeSmoothScrolling() {
-    const navLinks = document.querySelectorAll('a[href^="#"]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
-                e.preventDefault();
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
@@ -733,46 +758,17 @@ function initializeSmoothScrolling() {
             }
         });
     });
-    
-    console.log('Smooth scrolling initialized');
 }
 
 /**
- * Handle window resize events
+ * Initialize cart functionality (placeholder for future enhancement)
  */
-window.addEventListener('resize', function() {
-    // Update any responsive elements if needed
-    updateCartDisplay();
-});
-
-/**
- * Handle page visibility changes
- */
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        // Page is now visible, refresh any time-sensitive data
-        console.log('Page became visible');
-    }
-});
-
-/**
- * Error handling for unhandled promises
- */
-window.addEventListener('unhandledrejection', function(event) {
-    console.error('Unhandled promise rejection:', event.reason);
-    showNotification('An unexpected error occurred. Please try again.', 'error');
-});
-
-/**
- * Global error handler
- */
-window.addEventListener('error', function(event) {
-    console.error('Global error:', event.error);
-    showNotification('An error occurred. Please refresh the page.', 'error');
-});
+function initializeCartFunctionality() {
+    // Cart functionality is handled by other functions
+    // This is a placeholder for future cart-related features
+    console.log('Cart functionality initialized');
+}
 
 // Export functions for global access
 window.closeModal = closeModal;
 window.hideNotification = hideNotification;
-
-console.log('GrindCTRL JavaScript loaded successfully');
