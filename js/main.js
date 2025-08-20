@@ -1,8 +1,8 @@
-
 /**
  * Main JavaScript for GrindCTRL T-Shirt E-commerce Site
  * Handles form interactions, cart functionality, and n8n webhook integration
  */
+
 // Global state management
 const AppState = {
     cart: {
@@ -18,6 +18,7 @@ const AppState = {
     webhookUrl: '', // Will be set from environment or fallback
     isSubmitting: false
 };
+
 // Configuration
 const CONFIG = {
     // Get webhook URL from environment variable with fallback
@@ -30,6 +31,7 @@ const CONFIG = {
         position: 'top-right'
     }
 };
+
 /**
  * Get webhook URL from configuration or environment
  */
@@ -49,6 +51,7 @@ function getWebhookUrl() {
     console.warn('Webhook URL not configured. Orders will not be processed.');
     return null;
 }
+
 /**
  * DOM Content Loaded Event Handler
  */
@@ -70,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('All components initialized successfully');
 });
+
 /**
  * Initialize quantity selector controls
  */
@@ -109,6 +113,7 @@ function initializeQuantityControls() {
     
     console.log('Quantity controls initialized');
 }
+
 /**
  * Initialize form event handlers
  */
@@ -139,6 +144,7 @@ function initializeFormHandlers() {
     
     console.log('Form handlers initialized');
 }
+
 /**
  * Handle add to cart functionality
  */
@@ -168,6 +174,7 @@ function handleAddToCart(event) {
     
     console.log('Item added to cart:', cartItem);
 }
+
 /**
  * Handle form submission and webhook integration
  */
@@ -216,6 +223,7 @@ async function handleFormSubmission(event) {
         setLoadingState(false);
     }
 }
+
 /**
  * Get all form data
  */
@@ -230,6 +238,7 @@ function getFormData() {
     
     return data;
 }
+
 /**
  * Validate form data
  */
@@ -241,6 +250,7 @@ function validateForm(data) {
     
     return validateRequiredFields(requiredFields) && validateEmailFormat(data.email);
 }
+
 /**
  * Validate required fields
  */
@@ -257,6 +267,7 @@ function validateRequiredFields(fields) {
     
     return isValid;
 }
+
 /**
  * Validate email format
  */
@@ -271,6 +282,7 @@ function validateEmailFormat(email) {
     
     return true;
 }
+
 /**
  * Validate individual field
  */
@@ -291,6 +303,7 @@ function validateField(event) {
     
     return true;
 }
+
 /**
  * Mark field as having an error
  */
@@ -313,6 +326,7 @@ function markFieldAsError(field, message) {
     
     field.parentNode.appendChild(errorElement);
 }
+
 /**
  * Clear field error state
  */
@@ -328,6 +342,7 @@ function clearFieldError(field) {
         errorElement.remove();
     }
 }
+
 /**
  * Get human-readable field label
  */
@@ -347,6 +362,7 @@ function getFieldLabel(fieldName) {
     
     return labels[fieldName] || fieldName;
 }
+
 /**
  * Prepare order data for webhook - Updated to match Excel columns exactly
  */
@@ -362,7 +378,7 @@ function prepareOrderData(formData) {
     const orderDate = new Date().toISOString();
     
     // Auto-generate system values
-    const codAmount = formData.paymentMethod === "Cash on Delivery" ? total : 0; / //const codAmount = total; // COD Amount = Total Amount
+    const codAmount = formData.paymentMethod === "Cash on Delivery" ? total : 0; // COD Amount = Total only for COD, otherwise 0
     const trackingNumber = generateTrackingNumber();
     const courier = "BOSTA"; // Fixed courier company
     
@@ -388,6 +404,7 @@ function prepareOrderData(formData) {
         "Quantity": quantity.toString()
     };
 }
+
 /**
  * Generate unique order ID
  */
@@ -396,6 +413,7 @@ function generateOrderId() {
     const randomStr = Math.random().toString(36).substring(2, 8);
     return `GC-${timestamp}-${randomStr}`.toUpperCase();
 }
+
 /**
  * Generate random tracking number
  */
@@ -404,6 +422,7 @@ function generateTrackingNumber() {
     const randomNum = Math.floor(Math.random() * 1000000000); // 9-digit number
     return `${prefix}${randomNum.toString().padStart(9, '0')}`;
 }
+
 /**
  * Send order data to n8n webhook
  */
@@ -481,6 +500,7 @@ async function sendOrderToWebhook(orderData) {
         };
     }
 }
+
 /**
  * Update order summary display
  */
@@ -500,6 +520,7 @@ function updateOrderSummary() {
     subtotalElement.textContent = `${subtotal.toFixed(2)} ${AppState.product.currency}`;
     totalElement.textContent = `${total.toFixed(2)} ${AppState.product.currency}`;
 }
+
 /**
  * Update cart display
  */
@@ -510,6 +531,7 @@ function updateCartDisplay() {
         cartCountElement.style.display = AppState.cart.count > 0 ? 'flex' : 'none';
     }
 }
+
 /**
  * Set loading state for form submission
  */
@@ -522,29 +544,53 @@ function setLoadingState(loading) {
         buyNowBtn.disabled = true;
         buyNowBtn.classList.add('loading');
         btnText.style.display = 'none';
-        btnLoader.style.display = 'inline-block';
+        btnLoader.style.display = 'inline-flex';
     } else {
         buyNowBtn.disabled = false;
         buyNowBtn.classList.remove('loading');
-        btnText.style.display = 'inline-block';
+        btnText.style.display = 'inline';
         btnLoader.style.display = 'none';
     }
 }
+
 /**
- * Show order success message
+ * Show order success modal
  */
 function showOrderSuccess(orderData) {
-    const successMessage = `
-        <div class="order-success">
-            <h3>Order Submitted Successfully!</h3>
-            <p><strong>Order ID:</strong> ${orderData["Order ID"]}</p>
-            <p><strong>Tracking Number:</strong> ${orderData["Tracking Number"]}</p>
-            <p>You will receive a confirmation email shortly.</p>
-        </div>
-    `;
+    const modal = document.getElementById('successModal');
+    const orderDetails = document.getElementById('orderDetails');
     
-    showNotification(successMessage, 'success', 10000);
+    if (orderDetails) {
+        orderDetails.innerHTML = `
+            <div class="order-info">
+                <p><strong>Order ID:</strong> ${orderData['Order ID']}</p>
+                <p><strong>Product:</strong> ${orderData.Product}</p>
+                <p><strong>Quantity:</strong> ${orderData.Quantity}</p>
+                <p><strong>Total:</strong> ${orderData.Total} ${AppState.product.currency}</p>
+                <p><strong>Payment Method:</strong> ${orderData['Payment Method']}</p>
+            </div>
+        `;
+    }
+    
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    showNotification('Order placed successfully!', 'success');
 }
+
+/**
+ * Close modal
+ */
+function closeModal() {
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
 /**
  * Reset form to initial state
  */
@@ -559,82 +605,160 @@ function resetForm() {
             quantityInput.value = 1;
         }
         
-        // Clear any error states
-        const errorFields = form.querySelectorAll('.error');
-        errorFields.forEach(field => clearFieldError(field));
+        // Reset status to Confirmed
+        const statusField = document.getElementById('status');
+        if (statusField) {
+            statusField.value = 'Confirmed';
+        }
         
-        // Update order summary
+        // Reset payment method to Cash on Delivery
+        const paymentField = document.getElementById('paymentMethod');
+        if (paymentField) {
+            paymentField.value = 'Cash on Delivery';
+        }
+        
+        // Clear any field errors
+        const errorElements = form.querySelectorAll('.field-error');
+        errorElements.forEach(error => error.remove());
+        
+        const errorFields = form.querySelectorAll('.error');
+        errorFields.forEach(field => field.classList.remove('error'));
+        
         updateOrderSummary();
     }
 }
-/**
- * Initialize cart functionality
- */
-function initializeCartFunctionality() {
-    // Initialize cart with empty state
-    AppState.cart = { count: 0, items: [] };
-    updateCartDisplay();
-    
-    console.log('Cart functionality initialized');
-}
+
 /**
  * Initialize notification system
  */
 function initializeNotificationSystem() {
-    // Create notification container if it doesn't exist
-    let notificationContainer = document.getElementById('notification-container');
-    if (!notificationContainer) {
-        notificationContainer = document.createElement('div');
-        notificationContainer.id = 'notification-container';
-        notificationContainer.className = 'notification-container';
-        document.body.appendChild(notificationContainer);
+    // Create notification styles if not already present
+    if (!document.getElementById('notification-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'notification-styles';
+        styles.textContent = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--light-grey);
+                color: var(--text-color);
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-heavy);
+                z-index: 1000;
+                max-width: 300px;
+                border-left: 4px solid var(--primary-color);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all var(--transition-medium);
+            }
+            
+            .notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            
+            .notification.success {
+                border-left-color: var(--success-color);
+            }
+            
+            .notification.warning {
+                border-left-color: var(--warning-color);
+            }
+            
+            .notification.error {
+                border-left-color: var(--error-color);
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+            
+            .notification-close {
+                background: none;
+                border: none;
+                color: var(--text-color);
+                cursor: pointer;
+                padding: 0;
+                margin-left: auto;
+                opacity: 0.7;
+            }
+            
+            .notification-close:hover {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(styles);
     }
 }
+
 /**
- * Show notification to user
+ * Show notification
  */
-function showNotification(message, type = 'info', duration = 5000) {
-    const notificationContainer = document.getElementById('notification-container');
-    if (!notificationContainer) {
-        console.error('Notification container not found');
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    const messageElement = notification.querySelector('.notification-message');
+    const iconElement = notification.querySelector('.notification-icon');
+    
+    if (!notification || !messageElement || !iconElement) {
+        console.warn('Notification elements not found');
         return;
     }
     
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = message;
+    // Set message
+    messageElement.textContent = message;
     
-    // Add to container
-    notificationContainer.appendChild(notification);
+    // Set icon based on type
+    const icons = {
+        success: 'fas fa-check-circle',
+        warning: 'fas fa-exclamation-triangle',
+        error: 'fas fa-exclamation-circle',
+        info: 'fas fa-info-circle'
+    };
     
-    // Show notification with animation
+    iconElement.className = `notification-icon ${icons[type] || icons.info}`;
+    
+    // Set notification class
+    notification.className = `notification ${type}`;
+    
+    // Show notification
+    notification.style.display = 'block';
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Auto-hide after duration
     setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-    
-    // Auto-remove notification
-    setTimeout(() => {
+        hideNotification();
+    }, CONFIG.notifications.duration);
+}
+
+/**
+ * Hide notification
+ */
+function hideNotification() {
+    const notification = document.getElementById('notification');
+    if (notification) {
         notification.classList.remove('show');
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
+            notification.style.display = 'none';
         }, 300);
-    }, duration);
+    }
 }
+
 /**
- * Initialize smooth scrolling for anchor links
+ * Initialize smooth scrolling
  */
 function initializeSmoothScrolling() {
-    // Add smooth scrolling behavior to all anchor links
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
     
-    anchorLinks.forEach(link => {
+    navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
                 targetElement.scrollIntoView({
@@ -645,42 +769,16 @@ function initializeSmoothScrolling() {
         });
     });
 }
+
 /**
- * Utility function to format currency
+ * Initialize cart functionality (placeholder for future enhancement)
  */
-function formatCurrency(amount, currency = 'EGP') {
-    return `${amount.toFixed(2)} ${currency}`;
+function initializeCartFunctionality() {
+    // Cart functionality is handled by other functions
+    // This is a placeholder for future cart-related features
+    console.log('Cart functionality initialized');
 }
-/**
- * Utility function to validate phone number format
- */
-function validatePhoneNumber(phone) {
-    // Basic phone number validation - can be enhanced based on requirements
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
-}
-/**
- * Utility function to sanitize user input
- */
-function sanitizeInput(input) {
-    if (typeof input !== 'string') {
-        return input;
-    }
-    
-    return input
-        .trim()
-        .replace(/[<>]/g, '') // Remove potential HTML tags
-        .substring(0, 1000); // Limit length
-}
-// Export functions for testing (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        AppState,
-        CONFIG,
-        getFormData,
-        validateForm,
-        prepareOrderData,
-        generateOrderId,
-        generateTrackingNumber
-    };
-}
+
+// Export functions for global access
+window.closeModal = closeModal;
+window.hideNotification = hideNotification;
