@@ -1,0 +1,36 @@
+/*
+Theme Name: GrindCTRL WooCommerce Theme
+Description: A modern dark-themed WooCommerce template converted from GrindCTRL single-product site. Maintains original design while adding full e-commerce functionality.
+Version: 1.0.0
+Author: GrindCTRL
+Template: twentytwentyfour
+WC requires at least: 8.0
+WC tested up to: 9.0
+Requires PHP: 7.4
+License: MIT
+Text Domain: grindctrl
+
+This theme supports WooCommerce and maintains the original dark aesthetic design.
+*/
+
+/* Import original styles */
+@import url('css/styles.css');
+
+/* WooCommerce specific enhancements */
+.woocommerce-page {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Ensure WooCommerce elements match our dark theme */
+.woocommerce .woocommerce-message,
+.woocommerce .woocommerce-info,
+.woocommerce .woocommerce-error {
+    background-color: var(--light-grey);
+    color: var(--text-color);
+    border-left: 4px solid var(--primary-color);
+}
+
+.woocommerce-page .entry-title {
+    color: var(--text-color);
+}

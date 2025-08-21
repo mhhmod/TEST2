@@ -36,7 +36,12 @@ const CONFIG = {
  * Get webhook URL from configuration or environment
  */
 function getWebhookUrl() {
-    // Try to get from global config first
+    // Try to get from global config first (WordPress localized)
+    if (window.CONFIG && window.CONFIG.WEBHOOK_URL && window.CONFIG.WEBHOOK_URL !== '') {
+        return window.CONFIG.WEBHOOK_URL;
+    }
+    
+    // Try original config method for backward compatibility
     if (window.CONFIG && window.CONFIG.WEBHOOK_URL && window.CONFIG.WEBHOOK_URL !== 'PLACEHOLDER_WEBHOOK_URL') {
         return window.CONFIG.WEBHOOK_URL;
     }
@@ -47,8 +52,8 @@ function getWebhookUrl() {
         return metaWebhook.getAttribute('content');
     }
     
-    // Fallback - this should be replaced during deployment
-    console.warn('Webhook URL not configured. Orders will not be processed.');
+    // Fallback - this should be configured in WordPress admin
+    console.warn('Webhook URL not configured. Please set it in WordPress admin under Appearance > GrindCTRL Settings.');
     return null;
 }
 
@@ -779,6 +784,68 @@ function initializeCartFunctionality() {
     console.log('Cart functionality initialized');
 }
 
+// WooCommerce Integration
+/**
+ * Handle WooCommerce add to cart events
+ */
+function initializeWooCommerceIntegration() {
+    // Listen for WooCommerce add to cart events
+    jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {
+        updateCartDisplay();
+        showNotification('Product added to cart successfully!', 'success');
+    });
+    
+    // Update cart count when page loads
+    if (typeof wc_add_to_cart_params !== 'undefined') {
+        updateWooCommerceCartCount();
+    }
+    
+    // Handle buy now functionality
+    jQuery(document).on('click', '#buyNowBtn', function(e) {
+        const form = jQuery(this).closest('form');
+        if (form.length) {
+            // Add buy_now flag to form
+            form.append('<input type="hidden" name="buy_now" value="1">');
+        }
+    });
+}
+
+/**
+ * Update cart count from WooCommerce
+ */
+function updateWooCommerceCartCount() {
+    if (window.CONFIG && window.CONFIG.AJAX_URL) {
+        jQuery.post(window.CONFIG.AJAX_URL, {
+            action: 'grindctrl_update_cart_count'
+        }, function(response) {
+            const cartCount = parseInt(response) || 0;
+            const cartCountElement = document.getElementById('cartCount');
+            if (cartCountElement) {
+                cartCountElement.textContent = cartCount;
+                cartCountElement.style.display = cartCount > 0 ? 'flex' : 'none';
+            }
+        });
+    }
+}
+
+/**
+ * Initialize WooCommerce-specific functionality on DOM ready
+ */
+jQuery(document).ready(function($) {
+    initializeWooCommerceIntegration();
+    
+    // Handle variation changes for variable products
+    $('form.variations_form').on('change', 'select', function() {
+        updateOrderSummary();
+    });
+    
+    // Custom styling for WooCommerce elements
+    $('.woocommerce-message, .woocommerce-error, .woocommerce-info').each(function() {
+        $(this).prepend('<i class="fas fa-info-circle"></i>');
+    });
+});
+
 // Export functions for global access
 window.closeModal = closeModal;
 window.hideNotification = hideNotification;
+window.updateWooCommerceCartCount = updateWooCommerceCartCount;
