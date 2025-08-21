@@ -383,7 +383,7 @@ function prepareOrderData(formData) {
     const courier = "BOSTA"; // Fixed courier company
     
     // Create product name with size
-    const productName = formData.size ? `${AppState.product.name} - ${formData.size}` : AppState.product.name;
+    const productName = formData.size ? `${AppState.product.name} / ${formData.size}` : AppState.product.name;
     console.log('DEBUG: Final product name:', productName);
     
     // Return data in the exact 14-field format required for Excel
@@ -400,7 +400,7 @@ function prepareOrderData(formData) {
         "Date": orderDate,
         "Status": "New", // System-generated status - always starts as "New"
         "Payment Method": formData.paymentMethod,
-        "Product": productName,
+        "Product+Size": productName,
         "Quantity": quantity.toString()
     };
 }
@@ -564,7 +564,7 @@ function showOrderSuccess(orderData) {
         orderDetails.innerHTML = `
             <div class="order-info">
                 <p><strong>Order ID:</strong> ${orderData['Order ID']}</p>
-                <p><strong>Product:</strong> ${orderData.Product}</p>
+                <p><strong>Product:</strong> ${orderData['Product+Size']}</p>
                 <p><strong>Quantity:</strong> ${orderData.Quantity}</p>
                 <p><strong>Total:</strong> ${orderData.Total} ${AppState.product.currency}</p>
                 <p><strong>Payment Method:</strong> ${orderData['Payment Method']}</p>
