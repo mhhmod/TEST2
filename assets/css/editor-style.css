@@ -1,0 +1,311 @@
+/**
+ * Editor Styles for GrindCTRL Theme
+ * 
+ * These styles are applied to the classic editor (TinyMCE)
+ *
+ * @package GrindCTRL
+ * @since 1.0.0
+ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Editor Body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    background: #fff;
+    margin: 20px;
+    max-width: 1200px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1.1rem;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 1.5rem;
+}
+
+/* Links */
+a {
+    color: #E74C3C;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+/* Blockquotes */
+blockquote {
+    border-left: 4px solid #E74C3C;
+    margin: 2rem 0;
+    padding: 1rem 2rem;
+    background: #f8f8f8;
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+blockquote p {
+    margin-bottom: 1rem;
+}
+
+blockquote cite {
+    font-style: normal;
+    font-weight: 600;
+    color: #666;
+    display: block;
+    margin-top: 1rem;
+}
+
+/* Code */
+code {
+    background: #f4f4f4;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.9em;
+    padding: 2px 6px;
+}
+
+pre {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background: #f8f8f8;
+    font-weight: 600;
+}
+
+/* Images */
+img {
+    height: auto;
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.alignleft {
+    float: left;
+    margin: 0 1.5rem 1rem 0;
+}
+
+.alignright {
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+}
+
+.aligncenter {
+    display: block;
+    margin: 1.5rem auto;
+}
+
+.alignnone {
+    margin: 1.5rem 0;
+}
+
+/* Captions */
+.wp-caption {
+    max-width: 100%;
+    margin: 1.5rem 0;
+}
+
+.wp-caption img {
+    display: block;
+    margin: 0 auto;
+}
+
+.wp-caption-text {
+    font-size: 0.9em;
+    color: #666;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Galleries */
+.gallery {
+    margin: 1.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.gallery-item {
+    flex: 1 1 calc(33.333% - 1rem);
+    min-width: 200px;
+}
+
+/* Buttons (for themes that support them) */
+.wp-block-button {
+    margin: 1.5rem 0;
+}
+
+.wp-block-button__link {
+    background-color: #E74C3C;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 24px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.wp-block-button__link:hover {
+    background-color: #c0392b;
+}
+
+/* Separators */
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 2rem auto;
+    max-width: 100px;
+}
+
+/* Text formatting */
+strong, b {
+    font-weight: 600;
+}
+
+em, i {
+    font-style: italic;
+}
+
+mark {
+    background: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Custom classes for editor */
+.large-text {
+    font-size: 1.25em;
+    line-height: 1.4;
+}
+
+.small-text {
+    font-size: 0.9em;
+}
+
+.highlight {
+    background: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        margin: 10px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+    }
+    
+    .gallery-item {
+        flex: 1 1 calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .gallery-item {
+        flex: 1 1 100%;
+    }
+}

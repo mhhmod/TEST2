@@ -1,0 +1,25 @@
+/*
+Theme Name: GrindCTRL WooCommerce Theme
+Description: A modern dark theme for WooCommerce featuring luxury t-shirt sales with comprehensive optimization and performance enhancements.
+Author: GrindCTRL Team
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: grindctrl
+Domain Path: /languages
+Tags: woocommerce, dark-theme, e-commerce, responsive, modern, luxury, fashion
+*/
+
+/* 
+ * Main theme styles are loaded from assets/css/theme.css
+ * This file serves as the theme identifier for WordPress
+ */
+
+/* Basic theme structure for WordPress recognition */
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
