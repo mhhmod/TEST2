@@ -1,10 +1,6 @@
 # GrindCTRL - T-Shirt E-commerce Site
-
-A minimal, single-product e-commerce website for selling luxury cropped black t-shirts. Built with vanilla HTML, CSS, and JavaScript, designed specifically for static hosting on GitHub Pages with n8n webhook integration.
-
 ## Features
 
-- **Single Product Focus**: Clean, focused product page for luxury cropped black t-shirt
 - **Dark Theme Design**: Modern dark aesthetic matching contemporary fashion e-commerce
 - **Responsive Design**: Mobile-first approach with seamless desktop experience
 - **Cart Functionality**: Add to cart with quantity management and visual feedback
