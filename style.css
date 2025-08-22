@@ -1,0 +1,15 @@
+/*
+Theme Name: GrindCTRL WooCommerce
+Description: Elegant WooCommerce theme for clothing e-commerce with webhook integration and modern UI
+Version: 1.0.0
+Author: GrindCTRL
+Text Domain: grindctrl
+WC requires at least: 5.0
+WC tested up to: 8.0
+License: GPL v2 or later
+*/
+
+/* Import the main styles */
+@import url('css/styles.css');
+
+/* Additional WooCommerce specific styles will be loaded via functions.php */
