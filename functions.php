@@ -185,35 +185,9 @@ function grindctrl_performance_optimizations(): void {
 add_action('init', 'grindctrl_performance_optimizations');
 
 /**
- * Add preconnect for Google Fonts
+ * Add preconnect for Google Fonts - handled in inc/enqueue-scripts.php
  */
-function grindctrl_resource_hints(array $urls, string $relation_type): array {
-    if (wp_style_is('grindctrl-fonts', 'queue') && 'preconnect' === $relation_type) {
-        $urls[] = array(
-            'href' => 'https://fonts.gstatic.com',
-            'crossorigin',
-        );
-    }
-    return $urls;
-}
-add_filter('wp_resource_hints', 'grindctrl_resource_hints', 10, 2);
 
 /**
- * Custom body classes
+ * Custom body classes - combined functionality moved to inc/theme-setup.php
  */
-function grindctrl_body_classes(array $classes): array {
-    // Add class for WooCommerce pages
-    if (class_exists('WooCommerce')) {
-        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
-            $classes[] = 'woocommerce-page';
-        }
-    }
-    
-    // Add class for mobile detection
-    if (wp_is_mobile()) {
-        $classes[] = 'mobile-device';
-    }
-    
-    return $classes;
-}
-add_filter('body_class', 'grindctrl_body_classes');

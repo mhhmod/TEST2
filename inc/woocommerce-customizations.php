@@ -189,6 +189,10 @@ add_action('woocommerce_before_shop_loop_item_title', 'grindctrl_product_badges'
  * Customize cart fragments for AJAX
  */
 function grindctrl_cart_count_fragments(array $fragments): array {
+    if (!class_exists('WooCommerce') || !WC()->cart) {
+        return $fragments;
+    }
+    
     $cart_count = WC()->cart->get_cart_contents_count();
     
     $fragments['#cartCount'] = '<span class="cart-count" id="cartCount">' . esc_html($cart_count) . '</span>';
@@ -201,6 +205,11 @@ add_filter('woocommerce_add_to_cart_fragments', 'grindctrl_cart_count_fragments'
  * Add AJAX endpoint for cart count
  */
 function grindctrl_get_cart_count(): void {
+    if (!class_exists('WooCommerce') || !WC()->cart) {
+        wp_send_json(array('count' => 0));
+        return;
+    }
+    
     $cart_count = WC()->cart->get_cart_contents_count();
     wp_send_json(array('count' => $cart_count));
 }

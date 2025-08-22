@@ -163,6 +163,18 @@ function grindctrl_custom_body_classes(array $classes): array {
         $classes[] = 'template-' . sanitize_html_class(str_replace('.php', '', basename($template)));
     }
 
+    // Add class for WooCommerce pages
+    if (class_exists('WooCommerce')) {
+        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) {
+            $classes[] = 'woocommerce-page';
+        }
+    }
+    
+    // Add class for mobile detection
+    if (wp_is_mobile()) {
+        $classes[] = 'mobile-device';
+    }
+
     return $classes;
 }
 add_filter('body_class', 'grindctrl_custom_body_classes');
