@@ -1,0 +1,9 @@
+/vendor/
+/node_modules/
+/.cache/
+/.idea/
+/.vscode/
+/grindctrl-theme.zip
+.DS_Store
+composer.lock
+coverage/

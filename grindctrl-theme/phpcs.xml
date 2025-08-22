@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="GrindCTRL Theme Standards">
+	<description>PSR-12 with WordPress best practices.</description>
+	<file>inc</file>
+	<file>functions.php</file>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<rule ref="PSR12"/>
+	<rule ref="WordPress-Extra"/>
+	<config name="ignore_warnings_on_exit" value="1"/>
+	<exclude-pattern>vendor/*</exclude-pattern>
+</ruleset>

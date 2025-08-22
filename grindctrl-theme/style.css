@@ -1,0 +1,17 @@
+/*
+Theme Name: GrindCTRL
+Theme URI: https://example.com/grindctrl
+Author: GrindCTRL
+Author URI: https://example.com
+Description: Ultra-optimized WooCommerce block theme for GrindCTRL, built for performance, accessibility, and modern Woo Blocks.
+Requires at least: 6.8.2
+Tested up to: 6.8.2
+Requires PHP: 8.3
+Version: 3.0.0
+Text Domain: grindctrl
+Tags: full-site-editing, block-patterns, ecommerce, woocommerce, accessibility-ready, rtl-language-support, dark-mode
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+/* Minimal CSS; main styles via theme.json. */
