@@ -1,0 +1,16 @@
+:root{scroll-behavior:smooth}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{margin:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{position:static;width:auto;height:auto}
+
+@media (prefers-reduced-motion: reduce){
+	*,*::before,*::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important}
+}
+
+.wp-block-button__link{transition:transform .12s ease, box-shadow .12s ease}
+.wp-block-button__link:hover{transform:translateY(-1px)}
+.wp-block-button__link:active{transform:translateY(0)}
+
+.wc-block-grid__product-image img{border-radius:12px}

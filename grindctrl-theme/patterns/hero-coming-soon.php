@@ -1,0 +1,24 @@
+<?php
+/**
+ * Title: GrindCTRL Coming Soon Hero
+ * Slug: grindctrl/hero-coming-soon
+ * Categories: grindctrl
+ * Block Types: core/group
+ * Inserter: yes
+ */
+?>
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var:preset|spacing|80","bottom":"var:preset|spacing|80"}}},"gradient":"hero","layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignfull has-hero-gradient-background has-background" style="padding-top:var(--wp--preset--spacing--80);padding-bottom:var(--wp--preset--spacing--80)"><!-- wp:heading {"textAlign":"center","level":1,"fontSize":"3xl"} -->
+<h1 class="wp-block-heading has-text-align-center has-3-xl-font-size">GrindCTRL — Store coming soon</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center","fontSize":"lg"} -->
+<p class="has-text-align-center has-lg-font-size">We’re crafting something powerful. Sign up to get notified.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
+<div class="wp-block-buttons"><!-- wp:button {"textColor":"bg","backgroundColor":"secondary"} -->
+<div class="wp-block-button"><a class="wp-block-button__link has-bg-color has-secondary-background-color has-text-color has-background wp-element-button">Notify me</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons --></div>
+<!-- /wp:group -->

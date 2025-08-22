@@ -6,6 +6,9 @@ namespace GrindCTRL\Theme\Theme;
 
 use GrindCTRL\Theme\Theme\Assets;
 use GrindCTRL\Theme\Theme\Woo\Customizations;
+use GrindCTRL\Theme\Support\Security;
+use GrindCTRL\Theme\Support\SEO;
+use GrindCTRL\Theme\Support\PWA;
 
 /**
  * Main theme setup and supports.
@@ -30,6 +33,9 @@ final class Setup
 		$this->register_block_patterns_category();
 		Assets::get_instance()->hook();
 		Customizations::get_instance()->hook();
+		Security::csp_headers();
+		SEO::hook();
+		PWA::hook();
 	}
 
 	private function add_theme_supports(): void
