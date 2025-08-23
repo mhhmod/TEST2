@@ -1,0 +1,78 @@
+/**
+ * Admin Styles for GrindCTRL Theme
+ *
+ * @package GrindCTRL
+ * @since 1.0.0
+ */
+
+/* Admin Post Editor Styles */
+.post-type-testimonial .form-table th,
+.post-type-team_member .form-table th {
+    font-weight: 600;
+    color: #23282d;
+}
+
+.post-type-testimonial .form-table input[type="text"],
+.post-type-testimonial .form-table input[type="email"],
+.post-type-testimonial .form-table input[type="url"],
+.post-type-testimonial .form-table select,
+.post-type-team_member .form-table input[type="text"],
+.post-type-team_member .form-table input[type="email"],
+.post-type-team_member .form-table input[type="url"] {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 8px 12px;
+}
+
+.post-type-testimonial .form-table input[type="text"]:focus,
+.post-type-testimonial .form-table input[type="email"]:focus,
+.post-type-testimonial .form-table input[type="url"]:focus,
+.post-type-testimonial .form-table select:focus,
+.post-type-team_member .form-table input[type="text"]:focus,
+.post-type-team_member .form-table input[type="email"]:focus,
+.post-type-team_member .form-table input[type="url"]:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+/* Custom columns in admin list */
+.column-featured,
+.column-rating {
+    width: 100px;
+    text-align: center;
+}
+
+.column-rating {
+    color: #ffb900;
+}
+
+/* Meta box styling */
+#testimonial_details .form-table,
+#team_member_details .form-table {
+    background: #fff;
+}
+
+#testimonial_details .form-table tr:nth-child(even),
+#team_member_details .form-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Admin notices */
+.grindctrl-admin-notice {
+    border-left: 4px solid #0073aa;
+    padding: 12px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.grindctrl-admin-notice.notice-success {
+    border-left-color: #46b450;
+}
+
+.grindctrl-admin-notice.notice-error {
+    border-left-color: #dc3232;
+}
+
+.grindctrl-admin-notice.notice-warning {
+    border-left-color: #ffb900;
+}
