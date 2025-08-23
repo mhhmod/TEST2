@@ -48,7 +48,6 @@ function getWebhookUrl() {
     }
     
     // Fallback - this should be replaced during deployment
-    console.warn('Webhook URL not configured. Orders will not be processed.');
     return null;
 }
 
@@ -56,13 +55,12 @@ function getWebhookUrl() {
  * DOM Content Loaded Event Handler
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('GrindCTRL E-commerce Site Initialized');
-    
     // Initialize all components
     initializeQuantityControls();
     initializeFormHandlers();
     initializeCartFunctionality();
     initializeNotificationSystem();
+    initializeKeyboardNavigation();
     
     // Update initial display
     updateOrderSummary();
@@ -70,8 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up smooth scrolling for anchor links
     initializeSmoothScrolling();
-    
-    console.log('All components initialized successfully');
 });
 
 /**
@@ -83,7 +79,6 @@ function initializeQuantityControls() {
     const quantityInput = document.getElementById('quantity');
     
     if (!decreaseBtn || !increaseBtn || !quantityInput) {
-        console.warn('Quantity controls not found');
         return;
     }
     
@@ -197,8 +192,7 @@ async function handleFormSubmission(event) {
     setLoadingState(true);
     
     try {
-        // Debug: Log form data to see what we're getting
-        console.log('Form data received:', formData);
+        // Form data validation completed
         
         // Prepare order data for webhook
         const orderData = prepareOrderData(formData);
@@ -216,7 +210,6 @@ async function handleFormSubmission(event) {
         }
         
     } catch (error) {
-        console.error('Order submission error:', error);
         showNotification(`Order failed: ${error.message}`, 'error');
     } finally {
         AppState.isSubmitting = false;
@@ -225,7 +218,7 @@ async function handleFormSubmission(event) {
 }
 
 /**
- * Get all form data
+ * Get all form data with sanitization
  */
 function getFormData() {
     const form = document.getElementById('orderForm');
@@ -233,10 +226,32 @@ function getFormData() {
     const data = {};
     
     for (let [key, value] of formData.entries()) {
-        data[key] = value;
+        // Sanitize input data
+        data[key] = sanitizeInput(value);
     }
     
     return data;
+}
+
+/**
+ * Sanitize input data
+ */
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    
+    // Remove potential XSS characters and trim whitespace
+    return input
+        .trim()
+        .replace(/[<>'"&]/g, function(match) {
+            const escapeMap = {
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#x27;',
+                '&': '&amp;'
+            };
+            return escapeMap[match];
+        });
 }
 
 /**
@@ -305,10 +320,11 @@ function validateField(event) {
 }
 
 /**
- * Mark field as having an error
+ * Mark field as having an error with ARIA support
  */
 function markFieldAsError(field, message) {
     field.classList.add('error');
+    field.setAttribute('aria-invalid', 'true');
     
     // Remove existing error message
     const existingError = field.parentNode.querySelector('.field-error');
@@ -316,19 +332,26 @@ function markFieldAsError(field, message) {
         existingError.remove();
     }
     
-    // Add new error message
+    // Add new error message with unique ID
+    const errorId = field.id + '-error';
     const errorElement = document.createElement('div');
     errorElement.className = 'field-error';
+    errorElement.id = errorId;
     errorElement.textContent = message;
     errorElement.style.color = 'var(--error-color)';
     errorElement.style.fontSize = '0.875rem';
     errorElement.style.marginTop = '4px';
+    errorElement.setAttribute('role', 'alert');
+    errorElement.setAttribute('aria-live', 'polite');
+    
+    // Associate error with field
+    field.setAttribute('aria-describedby', errorId);
     
     field.parentNode.appendChild(errorElement);
 }
 
 /**
- * Clear field error state
+ * Clear field error state with ARIA cleanup
  */
 function clearFieldError(field) {
     if (typeof field === 'object' && field.target) {
@@ -336,6 +359,8 @@ function clearFieldError(field) {
     }
     
     field.classList.remove('error');
+    field.setAttribute('aria-invalid', 'false');
+    field.removeAttribute('aria-describedby');
     
     const errorElement = field.parentNode.querySelector('.field-error');
     if (errorElement) {
@@ -367,8 +392,6 @@ function getFieldLabel(fieldName) {
  * Prepare order data for webhook - Updated to match Excel columns exactly
  */
 function prepareOrderData(formData) {
-    console.log('DEBUG: Form data in prepareOrderData:', formData);
-    console.log('DEBUG: Size value:', formData.size);
     
     const quantity = parseInt(formData.quantity);
     const subtotal = AppState.product.price * quantity;
@@ -384,7 +407,6 @@ function prepareOrderData(formData) {
     
     // Create product name with size
     const productName = formData.size ? `${AppState.product.name} - ${formData.size}` : AppState.product.name;
-    console.log('DEBUG: Final product name:', productName);
     
     // Return data in the exact 14-field format required for Excel
     return {
@@ -704,7 +726,6 @@ function showNotification(message, type = 'info') {
     const iconElement = notification.querySelector('.notification-icon');
     
     if (!notification || !messageElement || !iconElement) {
-        console.warn('Notification elements not found');
         return;
     }
     
@@ -776,7 +797,48 @@ function initializeSmoothScrolling() {
 function initializeCartFunctionality() {
     // Cart functionality is handled by other functions
     // This is a placeholder for future cart-related features
-    console.log('Cart functionality initialized');
+}
+
+/**
+ * Initialize keyboard navigation support
+ */
+function initializeKeyboardNavigation() {
+    // Add keyboard support for cart icon
+    const cartIcon = document.querySelector('.cart-icon');
+    if (cartIcon) {
+        cartIcon.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                // Future: Open cart modal
+                showNotification('Cart functionality coming soon!', 'info');
+            }
+        });
+    }
+    
+    // Add keyboard support for modal close buttons
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // Close any open modals
+            const modals = document.querySelectorAll('.modal[style*="display: block"]');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+            
+            // Hide notifications
+            hideNotification();
+        }
+    });
+    
+    // Add keyboard support for quantity buttons
+    const qtyButtons = document.querySelectorAll('.qty-btn');
+    qtyButtons.forEach(button => {
+        button.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                button.click();
+            }
+        });
+    });
 }
 
 // Export functions for global access
