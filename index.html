@@ -14,6 +14,8 @@
     <meta property="og:url" content="https://grindctrlshop.free.fi">
     
     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for Icons -->
@@ -26,21 +28,23 @@
     <script src="config.js"></script>
 </head>
 <body>
+    <!-- Skip Navigation -->
+    <a href="#main-content" class="skip-nav" tabindex="1">Skip to main content</a>
     <!-- Header -->
-    <header class="header">
+    <header class="header" role="banner">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-shopping-bag"></i>
+                    <i class="fas fa-shopping-bag" aria-hidden="true"></i>
                     <span>GrindCTRL</span>
                 </div>
-                <nav class="nav">
+                <nav class="nav" role="navigation" aria-label="Main navigation">
                     <a href="#home" class="nav-link">Home</a>
                     <a href="#product" class="nav-link">Product</a>
                     <a href="#contact" class="nav-link">Contact</a>
-                    <div class="cart-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count" id="cartCount">0</span>
+                    <div class="cart-icon" role="button" tabindex="0" aria-label="Shopping cart with 0 items">
+                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                        <span class="cart-count" id="cartCount" aria-live="polite">0</span>
                     </div>
                 </nav>
             </div>
@@ -48,47 +52,47 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main" id="home">
+    <main class="main" id="main-content" role="main">
         <div class="container">
             <!-- Product Section -->
-            <section class="product-section" id="product">
+            <section class="product-section" id="product" aria-labelledby="product-title">
                 <div class="product-grid">
                     <!-- Product Image -->
                     <div class="product-image-container">
                         <div class="product-image">
-                            <img src="assets/product-main.png" alt="Luxury Cropped Black T-Shirt" id="productImage">
+                            <img src="assets/product-main.png" alt="Luxury Cropped Black T-Shirt - Premium cotton cropped black t-shirt with minimal design" id="productImage">
                         </div>
                         <div class="product-tags">
-                            <span class="tag">Hot Drop</span>
+                            <span class="tag" role="img" aria-label="Hot Drop - Limited time offer">Hot Drop</span>
                         </div>
                     </div>
 
                     <!-- Product Info -->
                     <div class="product-info">
-                        <h1 class="product-title">Luxury Cropped Black T-Shirt</h1>
+                        <h1 class="product-title" id="product-title">Luxury Cropped Black T-Shirt</h1>
                         <p class="product-subtitle">Minimal. Premium cotton. Built for grind.</p>
                         
-                        <div class="price-section">
-                            <span class="price-original">350,00 EGP</span>
-                            <span class="price-current">300,00 EGP</span>
+                        <div class="price-section" role="region" aria-label="Product pricing">
+                            <span class="price-original" aria-label="Original price 350.00 Egyptian pounds">350,00 EGP</span>
+                            <span class="price-current" aria-label="Current price 300.00 Egyptian pounds">300,00 EGP</span>
                         </div>
 
-                        <div class="product-features">
-                            <div class="feature">
-                                <i class="fas fa-truck"></i>
+                        <div class="product-features" role="list" aria-label="Product features">
+                            <div class="feature" role="listitem">
+                                <i class="fas fa-truck" aria-hidden="true"></i>
                                 <span>Fast checkout. Cart shipped.</span>
                             </div>
-                            <div class="feature">
-                                <i class="fas fa-clock"></i>
+                            <div class="feature" role="listitem">
+                                <i class="fas fa-clock" aria-hidden="true"></i>
                                 <span>Free returns within 14 days</span>
                             </div>
                         </div>
 
                         <!-- Order Form -->
-                        <form class="order-form" id="orderForm">
+                        <form class="order-form" id="orderForm" role="form" aria-label="Product order form">
                             <div class="form-group">
-                                <label for="size">Size</label>
-                                <select id="size" name="size" required>
+                                <label for="size">Size *</label>
+                                <select id="size" name="size" required aria-describedby="size-error" aria-invalid="false">
                                     <option value="">Select Size</option>
                                     <option value="XS">XS</option>
                                     <option value="S">S</option>
@@ -101,10 +105,10 @@
 
                             <div class="form-group">
                                 <label for="quantity">Quantity</label>
-                                <div class="quantity-selector">
-                                    <button type="button" class="qty-btn" id="decreaseQty">-</button>
-                                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly>
-                                    <button type="button" class="qty-btn" id="increaseQty">+</button>
+                                <div class="quantity-selector" role="group" aria-label="Quantity selector">
+                                    <button type="button" class="qty-btn" id="decreaseQty" aria-label="Decrease quantity">-</button>
+                                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly aria-label="Product quantity">
+                                    <button type="button" class="qty-btn" id="increaseQty" aria-label="Increase quantity">+</button>
                                 </div>
                             </div>
 
@@ -173,11 +177,11 @@
                             </div>
 
                             <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="addToCartBtn">Add to Cart</button>
-                                <button type="submit" class="btn btn-primary" id="buyNowBtn">
+                                <button type="button" class="btn btn-secondary" id="addToCartBtn" aria-describedby="cart-status">Add to Cart</button>
+                                <button type="submit" class="btn btn-primary" id="buyNowBtn" aria-describedby="order-status">
                                     <span class="btn-text">Buy Now</span>
-                                    <span class="btn-loader" style="display: none;">
-                                        <i class="fas fa-spinner fa-spin"></i>
+                                    <span class="btn-loader" style="display: none;" aria-hidden="true">
+                                        <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
                                     </span>
                                 </button>
                             </div>
@@ -211,22 +215,22 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="logo">
-                        <i class="fas fa-shopping-bag"></i>
+                        <i class="fas fa-shopping-bag" aria-hidden="true"></i>
                         <span>GrindCTRL</span>
                     </div>
                     <p>© 2025 GrindCTRL. All rights reserved.</p>
                 </div>
-                <div class="footer-links">
+                <nav class="footer-links" role="navigation" aria-label="Footer navigation">
                     <a href="#privacy">Privacy Policy</a>
                     <a href="#terms">Terms of Service</a>
                     <a href="#returns">Returns</a>
                     <a href="#contact">Contact</a>
-                </div>
+                </nav>
             </div>
         </div>
     </footer>

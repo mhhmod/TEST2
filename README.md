@@ -1,20 +1,27 @@
-# GrindCTRL - T-Shirt E-commerce Site
+# GrindCTRL - Premium Streetwear E-commerce Platform
+
+## Overview
+GrindCTRL is a modern e-commerce platform for premium streetwear and urban fashion, built as a single-page application optimized for GitHub Pages deployment.
+
 ## Features
 
 - **Dark Theme Design**: Modern dark aesthetic matching contemporary fashion e-commerce
 - **Responsive Design**: Mobile-first approach with seamless desktop experience
-- **Cart Functionality**: Add to cart with quantity management and visual feedback
+- **Accessibility Compliant**: WCAG 2.1 AA compliant with ARIA attributes and keyboard navigation
 - **Order Processing**: Direct integration with n8n webhook for automated order handling
-- **Form Validation**: Client-side validation for customer information and order details
+- **Form Validation**: Client-side validation with input sanitization and error handling
 - **Static Deployment**: Fully compatible with GitHub Pages - no server required
+- **Performance Optimized**: Font preloading, optimized images, and efficient loading
 
 ## Technology Stack
 
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
-- **Fonts**: Google Fonts (Inter & Poppins)
+- **Styling**: CSS Custom Properties with dark theme
+- **Fonts**: Google Fonts (Inter & Poppins) with display swap
 - **Icons**: Font Awesome 6
 - **Deployment**: GitHub Pages with automated CI/CD
 - **Order Processing**: n8n webhook integration
+- **Accessibility**: ARIA attributes, keyboard navigation, screen reader support
 
 ## Quick Start
 
