@@ -1,0 +1,7 @@
+parameters:
+	level: max
+	paths:
+		- inc
+	checkMissingIterableValueType: true
+	checkGenericClassInNonGenericObjectType: true
+	checkMissingVarTagTypehint: true
